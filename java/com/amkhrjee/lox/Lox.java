@@ -40,7 +40,7 @@ public class Lox {
         BufferedReader reader = new BufferedReader(input);
 
         while (true) {
-            System.out.print("> ");
+            System.out.print("Lox >> ");
             String line = reader.readLine();
             if (line == null)
                 break;
@@ -62,12 +62,11 @@ public class Lox {
         Parser parser = new Parser(tokens);
         Expr expression = parser.parse();
         // Stop if there was a syntax error
-        // if (hadError)
-        // return;
+        if (hadError)
+            return;
 
         System.out.println(new AstPrinter().print(expression));
         interpreter.interpret(expression);
-
     }
 
     static void error(int line, String message) {

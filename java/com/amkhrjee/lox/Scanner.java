@@ -48,6 +48,7 @@ class Scanner {
         return tokens;
     }
 
+    // Scans a single token
     private void scanToken() {
         char c = advance();
         switch (c) {

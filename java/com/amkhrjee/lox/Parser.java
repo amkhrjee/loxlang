@@ -104,23 +104,6 @@ class Parser {
         throw error(peek(), "Expected expression.");
     }
 
-    private boolean match(TokenType... types) {
-        for (TokenType type : types) {
-            if (check(type)) {
-                advance();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private Token consume(TokenType type, String message) {
-        if (check(type))
-            return advance();
-        throw error(peek(), message);
-    }
-
     private ParseError error(Token token, String message) {
         Lox.error(token, message);
         return new ParseError();
@@ -149,6 +132,24 @@ class Parser {
 
     // advance();
     // }
+
+    // Util functions
+    private boolean match(TokenType... types) {
+        for (TokenType type : types) {
+            if (check(type)) {
+                advance();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Token consume(TokenType type, String message) {
+        if (check(type))
+            return advance();
+        throw error(peek(), message);
+    }
 
     private boolean check(TokenType type) {
         if (isAtEnd())
