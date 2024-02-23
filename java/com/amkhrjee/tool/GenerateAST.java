@@ -12,11 +12,14 @@ public class GenerateAST {
         // System.exit(64);
         // }
         String outputDir = "C:\\Users\\aniru_sr6lha9\\Development\\craft_interpreters\\java\\com\\amkhrjee\\lox";
-        defineAST(outputDir, "Expr", Arrays.asList(
-                "Binary: Expr left, Token operator, Expr right",
-                "Grouping: Expr expression",
-                "Literal: Object value",
-                "Unary: Token operator, Expr right"));
+        // defineAST(outputDir, "Expr", Arrays.asList(
+        // "Binary: Expr left, Token operator, Expr right",
+        // "Grouping: Expr expression",
+        // "Literal: Object value",
+        // "Unary: Token operator, Expr right"));
+        defineAST(outputDir, "Stmt", Arrays.asList(
+                "Expression: Expr expression",
+                "Print: Expr expression"));
     }
 
     private static void defineAST(String outputDir, String baseName, List<String> types) throws IOException {
