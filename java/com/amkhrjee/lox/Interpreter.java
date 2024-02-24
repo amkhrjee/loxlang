@@ -12,6 +12,7 @@ import com.amkhrjee.lox.Stmt.Print;
 import com.amkhrjee.lox.Stmt.Var;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+    private Environment environment = new Environment();
 
     void interpret(List<Stmt> statements) {
         try {
@@ -158,13 +159,17 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitVarStmt(Var stmt) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'visitVarStmt'");
+        Object value = null; // if not initialized the value will be nil
+        if (stmt.initializer != null) {
+            value = evaluate(stmt.initializer);
+        }
+
+        environment.define(stmt.name.lexeme, value);
+        return null;
     }
 
     @Override
     public Object visitVariableExpr(Variable expr) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'visitVariableExpr'");
+        return environment.get(expr.name);
     }
 }

@@ -47,7 +47,7 @@ abstract class Stmt {
 
         @Override
         <R> R accept(Visitor<R> visitor) {
-            throw new UnsupportedOperationException("Unimplemented method 'accept'");
+            return visitor.visitVarStmt(this);
         }
 
     }

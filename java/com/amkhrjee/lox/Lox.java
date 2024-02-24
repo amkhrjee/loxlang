@@ -53,12 +53,12 @@ public class Lox {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
 
-        System.out.println("Tokens Generated:");
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        // System.out.println("Tokens Generated:");
+        // for (Token token : tokens) {
+        // System.out.println(token);
+        // }
 
-        System.out.println("Parse Tree Generated:");
+        // System.out.println("Parse Tree Generated:");
         Parser parser = new Parser(tokens);
         List<Stmt> statements = parser.parse();
         // Stop if there was a syntax error

@@ -80,7 +80,7 @@ abstract class Expr {
 
         @Override
         <R> R accept(Visitor<R> visitor) {
-            throw new UnsupportedOperationException("Unimplemented method 'accept'");
+            return visitor.visitVariableExpr(this);
         }
     }
 
