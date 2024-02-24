@@ -18,9 +18,32 @@ class Parser {
     List<Stmt> parse() {
         List<Stmt> statements = new ArrayList<>();
         while (!isAtEnd()) {
-            statements.add(statement());
+            statements.add(declaration());
         }
         return statements;
+    }
+
+    private Stmt declaration() {
+        try {
+            if (match(TokenType.VAR))
+                return varDeclaration();
+            return statement();
+        } catch (ParseError error) {
+            synchronize();
+            return null;
+        }
+    }
+
+    private Stmt varDeclaration() {
+        Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+        Expr initializer = null;
+        if (match(TokenType.EQUAL)) {
+            initializer = expression();
+        }
+
+        consume(TokenType.SEMICOLON, "Expect ';' after variable declarations.");
+        return new Stmt.Var(name, initializer);
     }
 
     private Stmt statement() {
@@ -119,7 +142,9 @@ class Parser {
             consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
         }
-
+        if (match(TokenType.IDENTIFIER)) {
+            return new Expr.Variable(previous());
+        }
         throw error(peek(), "Expected expression.");
     }
 
@@ -128,29 +153,30 @@ class Parser {
         return new ParseError();
     }
 
-    // private void synchronize() {
-    // advance();
+    // Error recovery
+    private void synchronize() {
+        advance();
 
-    // while (!isAtEnd()) {
-    // if (previous().type == TokenType.SEMICOLON)
-    // return;
-    // switch (peek().type) {
-    // case TokenType.CLASS:
-    // case TokenType.FUN:
-    // case TokenType.VAR:
-    // case TokenType.FOR:
-    // case TokenType.IF:
-    // case TokenType.WHILE:
-    // case TokenType.PRINT:
-    // case TokenType.RETURN:
-    // return;
-    // default:
-    // break;
-    // }
-    // }
+        while (!isAtEnd()) {
+            if (previous().type == TokenType.SEMICOLON)
+                return;
+            switch (peek().type) {
+                case TokenType.CLASS:
+                case TokenType.FUN:
+                case TokenType.VAR:
+                case TokenType.FOR:
+                case TokenType.IF:
+                case TokenType.WHILE:
+                case TokenType.PRINT:
+                case TokenType.RETURN:
+                    return;
+                default:
+                    break;
+            }
+        }
 
-    // advance();
-    // }
+        advance();
+    }
 
     // Util functions
     private boolean match(TokenType... types) {

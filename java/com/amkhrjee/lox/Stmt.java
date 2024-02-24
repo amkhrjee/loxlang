@@ -6,6 +6,8 @@ abstract class Stmt {
         R visitExpressionStmt(Expression stmt);
 
         R visitPrintStmt(Print stmt);
+
+        R visitVarStmt(Var stmt);
     }
 
     static class Expression extends Stmt {
@@ -32,6 +34,22 @@ abstract class Stmt {
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitPrintStmt(this);
         }
+    }
+
+    static class Var extends Stmt {
+        Var(Token name, Expr initializer) {
+            this.name = name;
+            this.initializer = initializer;
+        }
+
+        final Token name;
+        final Expr initializer;
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            throw new UnsupportedOperationException("Unimplemented method 'accept'");
+        }
+
     }
 
     abstract <R> R accept(Visitor<R> visitor);
