@@ -78,12 +78,12 @@ abstract class Expr {
             this.name = name;
         }
 
-        final Token name;
-
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitVariableExpr(this);
         }
+
+        final Token name;
     }
 
     static class Assign extends Expr {
@@ -92,13 +92,13 @@ abstract class Expr {
             this.value = value;
         }
 
-        final Token name;
-        final Expr value;
-
         @Override
         <R> R accept(Visitor<R> visitor) {
             return visitor.visitAssignExpr(this);
         }
+
+        final Token name;
+        final Expr value;
     }
 
     abstract <R> R accept(Visitor<R> visitor);

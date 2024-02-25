@@ -79,7 +79,6 @@ class Parser {
                 Token name = ((Expr.Variable) expr).name;
                 return new Expr.Assign(name, value);
             }
-
             error(equals, "Invalid assignment target.");
         }
         return expr;
@@ -88,7 +87,7 @@ class Parser {
     private Expr equality() {
         Expr expr = comparison();
 
-        while (match(TokenType.BANG_EQUAL, TokenType.EQUAL)) {
+        while (match(TokenType.BANG_EQUAL)) {
             Token operator = previous();
             Expr right = comparison();
             expr = new Expr.Binary(expr, operator, right); // <-- the recursion

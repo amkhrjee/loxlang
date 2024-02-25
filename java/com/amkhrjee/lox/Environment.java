@@ -11,8 +11,9 @@ class Environment {
     }
 
     Object get(Token name) {
-        if (values.containsKey(name.lexeme))
+        if (values.containsKey(name.lexeme)) {
             return values.get(name.lexeme);
+        }
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
     }
 

@@ -55,8 +55,9 @@ public class Lox {
 
         // System.out.println("Tokens Generated:");
         // for (Token token : tokens) {
-        // System.out.println(token);
+        // System.out.print(token.type + ", ");
         // }
+        // System.out.println(" ");
 
         // System.out.println("Parse Tree Generated:");
         Parser parser = new Parser(tokens);
