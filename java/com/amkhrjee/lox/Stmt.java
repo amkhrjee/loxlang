@@ -64,7 +64,7 @@ abstract class Stmt {
 
         @Override
         <R> R accept(Visitor<R> visitor) {
-            return this.accept(visitor);
+            return visitor.visitBlockStmt(this);
         }
 
         final List<Stmt> statements;

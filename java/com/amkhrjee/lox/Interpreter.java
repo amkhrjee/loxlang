@@ -185,7 +185,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Void visitBlockStmt(Block stmt) {
         // We pass the current environment as the enclosing environment
-        executeBlock(stmt.statements, new Environment(environment));
+        executeBlock(stmt.statements, new Environment(this.environment));
         return null;
     }
 

@@ -47,10 +47,12 @@ class Parser {
     }
 
     private Stmt statement() {
-        if (match(TokenType.PRINT))
+        if (match(TokenType.PRINT)) {
             return printStatement();
-        if (match(TokenType.LEFT_BRACE))
+        }
+        if (match(TokenType.LEFT_BRACE)) {
             return new Stmt.Block(block());
+        }
         return expressionStatement();
     }
 
