@@ -14,6 +14,7 @@ import com.amkhrjee.lox.Stmt.Expression;
 import com.amkhrjee.lox.Stmt.If;
 import com.amkhrjee.lox.Stmt.Print;
 import com.amkhrjee.lox.Stmt.Var;
+import com.amkhrjee.lox.Stmt.While;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     private Environment environment = new Environment();
@@ -230,5 +231,16 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
 
         return evaluate(expr.right);
+    }
+
+    @Override
+    public Void visitWhileStmt(While statement) {
+        Object left = evaluate(statement.condition);
+
+        if (isTruthy(left)) {
+            execute(statement.body);
+        }
+
+        return null;
     }
 }
