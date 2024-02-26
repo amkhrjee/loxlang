@@ -68,7 +68,7 @@ class Parser {
 
     private Stmt forStatement() {
         // Desugaring for loops to while loops
-        consume(TokenType.LEFT_BRACE, "Expect '(' after 'for'.");
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
 
         Stmt initializer;
         if (match(TokenType.SEMICOLON))
@@ -113,6 +113,7 @@ class Parser {
     }
 
     private Stmt whileStatement() {
+        System.out.println("Inside While Statement");
         consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
         Expr condition = expression();
         consume(TokenType.RIGHT_PAREN, "Expect ')' after while condition.");

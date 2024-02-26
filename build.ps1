@@ -1,0 +1,1 @@
+javac .\java\com\amkhrjee\lox\*.java -d .\build\classes\  

@@ -235,9 +235,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitWhileStmt(While statement) {
-        Object left = evaluate(statement.condition);
-
-        if (isTruthy(left)) {
+        while (isTruthy(evaluate(statement.condition))) {
             execute(statement.body);
         }
 
