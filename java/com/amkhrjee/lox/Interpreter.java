@@ -217,7 +217,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Object visitLogicalExpr(Logical expr) {
-        Object left = evaluate(expr);
+        Object left = evaluate(expr.left);
 
         if (expr.operator.type == TokenType.OR) {
             if (isTruthy(left)) {

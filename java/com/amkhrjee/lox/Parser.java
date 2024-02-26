@@ -3,8 +3,6 @@ package com.amkhrjee.lox;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.lang.model.type.TypeKind;
-
 // Recursive Descent
 class Parser {
     private final List<Token> tokens;
