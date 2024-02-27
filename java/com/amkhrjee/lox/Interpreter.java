@@ -18,7 +18,6 @@ import com.amkhrjee.lox.Stmt.If;
 import com.amkhrjee.lox.Stmt.Print;
 import com.amkhrjee.lox.Stmt.Var;
 import com.amkhrjee.lox.Stmt.While;
-import com.amkhrjee.lox.Return;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     Environment globals = new Environment();
