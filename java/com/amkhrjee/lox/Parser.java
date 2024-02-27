@@ -70,6 +70,9 @@ class Parser {
     }
 
     private Stmt statement() {
+        if (match(TokenType.RETURN))
+            return returnStatement();
+
         if (match(TokenType.FOR))
             return forStatement();
 
@@ -88,8 +91,18 @@ class Parser {
         return expressionStatement();
     }
 
+    private Stmt returnStatement() {
+        Token keyword = previous();
+        Expr value = null;
+        if (!check(TokenType.SEMICOLON))
+            value = expression();
+
+        consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+        return new Stmt.Return(keyword, value);
+    }
+
     private Stmt forStatement() {
-        // Desugaring for loops to while loops
+        // De-sugaring for loops to while loops
         consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
 
         Stmt initializer;

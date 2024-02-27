@@ -18,6 +18,7 @@ import com.amkhrjee.lox.Stmt.If;
 import com.amkhrjee.lox.Stmt.Print;
 import com.amkhrjee.lox.Stmt.Var;
 import com.amkhrjee.lox.Stmt.While;
+import com.amkhrjee.lox.Return;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     Environment globals = new Environment();
@@ -291,5 +292,14 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         LoxFunction function = new LoxFunction(stmt);
         environment.define(stmt.name.lexeme, function);
         return null;
+    }
+
+    @Override
+    public Void visitReturnStmt(Stmt.Return stmt) {
+        Object value = null;
+        if (stmt.value != null)
+            value = evaluate(stmt.value);
+
+        throw new Return(value);
     }
 }
