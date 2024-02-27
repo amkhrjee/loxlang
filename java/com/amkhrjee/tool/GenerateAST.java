@@ -1,3 +1,5 @@
+// NOTE: NOT PART OF THE LANGUAGE
+
 package com.amkhrjee.tool;
 
 import java.io.IOException;

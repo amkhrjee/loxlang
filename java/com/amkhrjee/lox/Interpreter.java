@@ -13,13 +13,36 @@ import com.amkhrjee.lox.Expr.Unary;
 import com.amkhrjee.lox.Expr.Variable;
 import com.amkhrjee.lox.Stmt.Block;
 import com.amkhrjee.lox.Stmt.Expression;
+import com.amkhrjee.lox.Stmt.Function;
 import com.amkhrjee.lox.Stmt.If;
 import com.amkhrjee.lox.Stmt.Print;
 import com.amkhrjee.lox.Stmt.Var;
 import com.amkhrjee.lox.Stmt.While;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
-    private Environment environment = new Environment();
+    Environment globals = new Environment();
+    private Environment environment = globals;
+
+    Interpreter() {
+        globals.define("clock", new LoxCallable() {
+
+            @Override
+            public int arity() {
+                return 0;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments) {
+                // return the current time in seconds
+                return (double) System.currentTimeMillis() / 1000.0;
+            }
+
+            @Override
+            public String toString() {
+                return "<native fn>";
+            }
+        });
+    }
 
     void interpret(List<Stmt> statements) {
         try {
@@ -194,7 +217,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return null;
     }
 
-    private void executeBlock(List<Stmt> statements, Environment environment) {
+    void executeBlock(List<Stmt> statements, Environment environment) {
         // Temporarily change the current environment of the interpreter
         Environment previous = this.environment;
         try {
@@ -261,5 +284,12 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             throw new RuntimeError(expr.paren,
                     "Expected " + function.arity() + " arguments but got " + arguments.size() + ".");
         return function.call(this, arguments);
+    }
+
+    @Override
+    public Void visitFunctionStmt(Function stmt) {
+        LoxFunction function = new LoxFunction(stmt);
+        environment.define(stmt.name.lexeme, function);
+        return null;
     }
 }
