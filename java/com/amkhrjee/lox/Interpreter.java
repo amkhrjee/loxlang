@@ -1,9 +1,11 @@
 package com.amkhrjee.lox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.amkhrjee.lox.Expr.Assign;
 import com.amkhrjee.lox.Expr.Binary;
+import com.amkhrjee.lox.Expr.Call;
 import com.amkhrjee.lox.Expr.Grouping;
 import com.amkhrjee.lox.Expr.Literal;
 import com.amkhrjee.lox.Expr.Logical;
@@ -240,5 +242,24 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         }
 
         return null;
+    }
+
+    @Override
+    public Object visitCallExpr(Call expr) {
+        Object callee = evaluate(expr.callee);
+
+        List<Object> arguments = new ArrayList<>();
+        for (Expr argument : expr.arguments) {
+            arguments.add(evaluate(argument));
+        }
+
+        if (!(callee instanceof LoxCallable))
+            throw new RuntimeError(expr.paren, "Can only call functions and classes.");
+
+        LoxCallable function = (LoxCallable) callee;
+        if (arguments.size() != function.arity())
+            throw new RuntimeError(expr.paren,
+                    "Expected " + function.arity() + " arguments but got " + arguments.size() + ".");
+        return function.call(this, arguments);
     }
 }
