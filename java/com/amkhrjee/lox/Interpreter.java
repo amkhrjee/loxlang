@@ -14,6 +14,7 @@ import com.amkhrjee.lox.Expr.Logical;
 import com.amkhrjee.lox.Expr.Unary;
 import com.amkhrjee.lox.Expr.Variable;
 import com.amkhrjee.lox.Stmt.Block;
+import com.amkhrjee.lox.Stmt.Class;
 import com.amkhrjee.lox.Stmt.Expression;
 import com.amkhrjee.lox.Stmt.Function;
 import com.amkhrjee.lox.Stmt.If;
@@ -321,5 +322,13 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             value = evaluate(stmt.value);
 
         throw new Return(value);
+    }
+
+    @Override
+    public Void visitClassStmt(Class stmt) {
+        environment.define(stmt.name.lexeme, null);
+        LoxClass klass = new LoxClass(stmt.name.lexeme);
+        environment.assign(stmt.name, klass);
+        return null;
     }
 }
