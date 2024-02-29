@@ -3,4 +3,20 @@ class Bacon {
         print "Crunch crunch crunch!";
     }
 }
-Bacon().eat();
+
+class Test {
+    hello() {
+        print "Hello World";
+    }
+}
+
+var test = Test();
+var bacon = Bacon();
+
+test.hello();
+bacon.eat();
+
+test.hello = bacon.eat;
+
+bacon.name = "Chris P. Bacon";
+print bacon.name;
