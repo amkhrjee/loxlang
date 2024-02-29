@@ -19,6 +19,8 @@ abstract class Expr {
         R visitLogicalExpr(Logical expr);
 
         R visitCallExpr(Call expr);
+
+        R visitGetExpr(Get expr);
     }
 
     static class Binary extends Expr {
@@ -139,6 +141,21 @@ abstract class Expr {
         final Expr callee;
         final Token paren;
         final List<Expr> arguments;
+    }
+
+    static class Get extends Expr {
+        Get(Expr Object, Token name) {
+            this.Object = Object;
+            this.name = name;
+        }
+
+        @Override
+        <R> R accept(Visitor<R> visitor) {
+            return visitor.visitGetExpr(this);
+        }
+
+        final Expr Object;
+        final Token name;
     }
 
     abstract <R> R accept(Visitor<R> visitor);

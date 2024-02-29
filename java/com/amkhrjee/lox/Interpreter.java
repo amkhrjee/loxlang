@@ -8,6 +8,7 @@ import java.util.Map;
 import com.amkhrjee.lox.Expr.Assign;
 import com.amkhrjee.lox.Expr.Binary;
 import com.amkhrjee.lox.Expr.Call;
+import com.amkhrjee.lox.Expr.Get;
 import com.amkhrjee.lox.Expr.Grouping;
 import com.amkhrjee.lox.Expr.Literal;
 import com.amkhrjee.lox.Expr.Logical;
@@ -330,5 +331,14 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         LoxClass klass = new LoxClass(stmt.name.lexeme);
         environment.assign(stmt.name, klass);
         return null;
+    }
+
+    @Override
+    public Object visitGetExpr(Get expr) {
+        Object object = evaluate(expr.Object);
+        if (object instanceof LoxInstance)
+            return ((LoxInstance) object).get(expr.name);
+
+        throw new RuntimeError(expr.name, "Only instances have properties.");
     }
 }
