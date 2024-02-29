@@ -7,8 +7,12 @@ import java.util.Stack;
 
 import com.amkhrjee.lox.Expr.Get;
 import com.amkhrjee.lox.Expr.Set;
+import com.amkhrjee.lox.Expr.This;
 import com.amkhrjee.lox.Stmt.Class;
 import com.amkhrjee.lox.Stmt.Function;
+
+// The job of the Resolver is to tell the Interpreter the number of hops
+// its should make in the list of "scopes" for a particular variable.
 
 class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private final Interpreter interpreter;
@@ -16,6 +20,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     // here in the Resolver they are implemented as Stack for Semantic Analysis
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
     private FunctionType currentFunction = FunctionType.NONE;
+    private ClassType currenClass = ClassType.NONE;
 
     Resolver(Interpreter interpreter) {
         this.interpreter = interpreter;
@@ -25,6 +30,11 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         NONE,
         FUNCTION,
         METHOD
+    }
+
+    private enum ClassType {
+        CLASS,
+        NONE
     }
 
     // Utils
@@ -223,13 +233,23 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitClassStmt(Class stmt) {
+        ClassType enclosingClass = currenClass;
+        currenClass = ClassType.CLASS;
+
         declare(stmt.name);
         define(stmt.name);
+
+        beginScope();
+        scopes.peek().put("this", true);
 
         for (Stmt.Function method : stmt.methods) {
             FunctionType declaration = FunctionType.METHOD;
             resolveFunction(method, declaration);
         }
+
+        endScope();
+
+        currenClass = enclosingClass;
         return null;
     }
 
@@ -243,6 +263,17 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     public Void visitSetExpr(Set expr) {
         resolve(expr.value);
         resolve(expr.object);
+        return null;
+    }
+
+    @Override
+    public Void visitThisExpr(This expr) {
+        if (currenClass == ClassType.NONE) {
+            Lox.error(expr.keyword, "Can't use 'this' outside of a class.");
+            return null;
+        }
+
+        resolveLocal(expr, expr.keyword);
         return null;
     }
 }

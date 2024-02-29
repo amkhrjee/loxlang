@@ -13,6 +13,7 @@ import com.amkhrjee.lox.Expr.Grouping;
 import com.amkhrjee.lox.Expr.Literal;
 import com.amkhrjee.lox.Expr.Logical;
 import com.amkhrjee.lox.Expr.Set;
+import com.amkhrjee.lox.Expr.This;
 import com.amkhrjee.lox.Expr.Unary;
 import com.amkhrjee.lox.Expr.Variable;
 import com.amkhrjee.lox.Stmt.Block;
@@ -360,5 +361,10 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         Object value = evaluate(expr.value);
         ((LoxInstance) object).set(expr.name, value);
         return null;
+    }
+
+    @Override
+    public Object visitThisExpr(This expr) {
+        return lookUpVariable(expr.keyword, expr);
     }
 }
