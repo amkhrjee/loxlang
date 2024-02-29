@@ -12,6 +12,7 @@ import com.amkhrjee.lox.Expr.Get;
 import com.amkhrjee.lox.Expr.Grouping;
 import com.amkhrjee.lox.Expr.Literal;
 import com.amkhrjee.lox.Expr.Logical;
+import com.amkhrjee.lox.Expr.Set;
 import com.amkhrjee.lox.Expr.Unary;
 import com.amkhrjee.lox.Expr.Variable;
 import com.amkhrjee.lox.Stmt.Block;
@@ -335,10 +336,22 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Object visitGetExpr(Get expr) {
-        Object object = evaluate(expr.Object);
+        Object object = evaluate(expr.object);
         if (object instanceof LoxInstance)
             return ((LoxInstance) object).get(expr.name);
 
         throw new RuntimeError(expr.name, "Only instances have properties.");
+    }
+
+    @Override
+    public Object visitSetExpr(Set expr) {
+        Object object = evaluate(expr.object);
+
+        if (!(object instanceof LoxInstance))
+            throw new RuntimeError(expr.name, "Only instances have field.");
+
+        Object value = evaluate(expr.value);
+        ((LoxInstance) object).set(expr.name, value);
+        return null;
     }
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import com.amkhrjee.lox.Expr.Get;
+import com.amkhrjee.lox.Expr.Set;
 import com.amkhrjee.lox.Stmt.Class;
 import com.amkhrjee.lox.Stmt.Function;
 
@@ -228,7 +229,14 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitGetExpr(Get expr) {
-        resolve(expr.Object);
+        resolve(expr.object);
+        return null;
+    }
+
+    @Override
+    public Void visitSetExpr(Set expr) {
+        resolve(expr.value);
+        resolve(expr.object);
         return null;
     }
 }
