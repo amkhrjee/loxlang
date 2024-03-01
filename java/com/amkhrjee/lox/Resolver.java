@@ -7,6 +7,7 @@ import java.util.Stack;
 
 import com.amkhrjee.lox.Expr.Get;
 import com.amkhrjee.lox.Expr.Set;
+import com.amkhrjee.lox.Expr.Super;
 import com.amkhrjee.lox.Expr.This;
 import com.amkhrjee.lox.Stmt.Class;
 import com.amkhrjee.lox.Stmt.Function;
@@ -35,7 +36,8 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     private enum ClassType {
         NONE,
-        CLASS
+        CLASS,
+        SUBCLASS
     }
 
     // Utils
@@ -247,8 +249,23 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
             Lox.error(stmt.superclass.name, "A class can't inherit from itself.");
         }
 
-        if (stmt.superclass != null)
+        // I don't understand why we are using repeated if checks
+        // for the same condition, but this is how it is done
+        // in the original implementation:
+        // https://github.com/munificent/craftinginterpreters/blob/master/java/com/craftinginterpreters/lox/Resolver.java#L70
+        // Has this something to do with "separation of concerns"?
+        // If you are reading this and you know the reason
+        // please make a PR with the explanation here
+
+        if (stmt.superclass != null) {
+            currentClass = ClassType.SUBCLASS;
             resolve(stmt.superclass);
+        }
+
+        if (stmt.superclass != null) {
+            beginScope();
+            scopes.peek().put("super", true);
+        }
 
         beginScope();
         scopes.peek().put("this", true);
@@ -263,6 +280,9 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         }
 
         endScope();
+
+        if (stmt.superclass != null)
+            endScope();
 
         currentClass = enclosingClass;
         return null;
@@ -288,6 +308,17 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
             return null;
         }
 
+        resolveLocal(expr, expr.keyword);
+        return null;
+    }
+
+    @Override
+    public Void visitSuperExpr(Super expr) {
+        if (currentClass == ClassType.NONE)
+            Lox.error(expr.keyword, "Can't use 'super' outside of a class.");
+        else if (currentClass != ClassType.SUBCLASS) {
+            Lox.error(expr.keyword, "Can't use 'super' in a class with no superclass.");
+        }
         resolveLocal(expr, expr.keyword);
         return null;
     }
