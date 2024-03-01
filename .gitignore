@@ -1,1 +1,7 @@
 build
+*.lst
+*.o
+*.eep
+*.lss
+*.map
+*.sym
