@@ -9,6 +9,7 @@
 typedef enum
 {
     OP_CONSTANT, // produces a particular constant
+    OP_NEGATE,
     OP_RETURN,
 } OpCode;
 
