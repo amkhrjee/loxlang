@@ -35,6 +35,19 @@ static InterpretResult run()
 {
 #define READ_BYTE() (*vm.ip++)
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
+// You can pass operators as macro argument!
+// as far as the preprocessor is concerned, it's all just text tokens
+#define BINARY_OP(op)     \
+    do                    \
+    {                     \
+        double b = pop(); \
+        double a = pop(); \
+        push(a op b);     \
+    } while (false)
+    //  We're using a do-while here as a container for the statements
+    // that can be embedded into any surrounding environment of
+    // C statements
+
     for (;;)
     {
 #ifdef DEBUG_TRACE_EXECUTION
@@ -48,6 +61,7 @@ static InterpretResult run()
         printf("\n");
         disassembleInstruction(vm.chunk, (int)(vm.ip - vm.chunk->code));
 #endif
+
         uint8_t instruction;
         switch (instruction = READ_BYTE())
         {
@@ -56,6 +70,18 @@ static InterpretResult run()
             push(constant);
             printValue(constant);
             printf("\n");
+            break;
+        case OP_ADD:
+            BINARY_OP(+);
+            break;
+        case OP_SUBTRACT:
+            BINARY_OP(-);
+            break;
+        case OP_MULTIPLY:
+            BINARY_OP(*);
+            break;
+        case OP_DIVIDE:
+            BINARY_OP(/);
             break;
         case OP_NEGATE:
             push(-pop());
@@ -67,6 +93,7 @@ static InterpretResult run()
         }
     }
 
+#undef BINARY_OP
 #undef READ_CONSTANT
 #undef READ_BYTE
 }
