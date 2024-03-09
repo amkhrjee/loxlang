@@ -225,7 +225,7 @@ static Token identifier()
 Token scanToken()
 {
     skipWhiteSpace();
-    scanner.start = scanner.current;
+    scanner.start = scanner.current; // this sets the first character of the lexeme
 
     if (isAtEnd())
         return makeToken(TOKEN_EOF);
