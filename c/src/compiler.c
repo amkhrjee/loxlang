@@ -15,6 +15,7 @@ typedef struct
     bool panicMode;
 } Parser;
 
+// Precedence of different Non-terminals
 typedef enum
 {
     PREC_NONE,
@@ -30,6 +31,10 @@ typedef enum
     PREC_PRIMARY
 } Precedence;
 
+/*  Type alias for a function pointer that points to
+    a function that has a return type of void and takes no arguments.
+    The alias is "ParseFn".
+*/
 typedef void (*ParseFn)();
 
 typedef struct
