@@ -2,11 +2,6 @@
 #include "debug.h"
 #include "value.h"
 
-void printValue(Value value)
-{
-    printf("%g", value);
-}
-
 // the static keyword indicates that the scope of
 // this routine is limited to this source file
 static int simpleInstruction(const char *name, int offset)

@@ -1,7 +1,8 @@
+#include <stdio.h>
+#include <stdarg.h>
 #include "vm.h"
 #include "debug.h"
 #include "compiler.h"
-#include <stdio.h>
 // we're making a static VM here,
 // hence the global variable
 VM vm;
@@ -9,6 +10,20 @@ VM vm;
 static void resetStack()
 {
     vm.stackTop = vm.stack;
+}
+
+static void runtimeError(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    vfprintf(stderr, format, args);
+    va_end(args);
+    fputs("\n", stderr);
+
+    size_t instruction = vm.ip - vm.chunk->code - 1;
+    int line = vm.chunk->lines[instruction];
+    fprintf(stderr, "[line %d] in script\n", line);
+    resetStack();
 }
 
 void initVM()
@@ -32,18 +47,28 @@ Value pop()
     return *vm.stackTop;
 }
 
+static Value peek(int distance)
+{
+    return vm.stackTop[-1 - distance];
+}
+
 static InterpretResult run()
 {
 #define READ_BYTE() (*vm.ip++)
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
 // You can pass operators as macro argument!
 // as far as the preprocessor is concerned, it's all just text tokens
-#define BINARY_OP(op)     \
-    do                    \
-    {                     \
-        double b = pop(); \
-        double a = pop(); \
-        push(a op b);     \
+#define BINARY_OP(valueType, op)                        \
+    do                                                  \
+    {                                                   \
+        if (!IS_NUMBER(peek(0)) || !IS_NUMBER(peek(1))) \
+        {                                               \
+            runtimeError("Operand must be a number.");  \
+            return INTERPRET_RUNTIME_ERROR;             \
+        }                                               \
+        double b = AS_NUMBER(pop());                    \
+        double a = AS_NUMBER(pop());                    \
+        push(valueType(a op b));                        \
     } while (false)
     //  We're using a do-while here as a container for the statements
     // that can be embedded into any surrounding environment of
@@ -73,19 +98,24 @@ static InterpretResult run()
             printf("\n");
             break;
         case OP_ADD:
-            BINARY_OP(+);
+            BINARY_OP(NUMBER_VAL, +);
             break;
         case OP_SUBTRACT:
-            BINARY_OP(-);
+            BINARY_OP(NUMBER_VAL, -);
             break;
         case OP_MULTIPLY:
-            BINARY_OP(*);
+            BINARY_OP(NUMBER_VAL, *);
             break;
         case OP_DIVIDE:
-            BINARY_OP(/);
+            BINARY_OP(NUMBER_VAL, /);
             break;
         case OP_NEGATE:
-            push(-pop());
+            if (!IS_NUMBER(peek(0)))
+            {
+                runtimeError("Operand must be a number.");
+                return INTERPRET_RUNTIME_ERROR;
+            }
+            push(NUMBER_VAL(-AS_NUMBER(pop())));
             break;
         case OP_RETURN:
             printValue(pop());
