@@ -19,6 +19,9 @@ typedef enum
     OP_FALSE,
     OP_NIL,
     OP_NOT,
+    OP_EQUAL,
+    OP_GREATER,
+    OP_LESS,
 } OpCode;
 
 typedef struct
