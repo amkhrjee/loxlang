@@ -28,6 +28,7 @@ struct ObjString
 };
 
 ObjString *copyString(const char *chars, int length);
+void printObject(Value value);
 
 /*
  Why not a macro?
