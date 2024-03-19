@@ -17,6 +17,7 @@ typedef enum
 struct Obj
 {
     ObjType type;
+    struct Obj *next; // Linked List node for garbage collection
 };
 
 // "Struct Inheritance"
