@@ -27,6 +27,9 @@ struct ObjString
     char *chars;
 };
 
+// Takes ownership of the string passed in
+ObjString *takeString(char *chars, int length);
+// Does not take ownership of the string you passed in
 ObjString *copyString(const char *chars, int length);
 void printObject(Value value);
 
