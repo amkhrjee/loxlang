@@ -27,6 +27,8 @@ struct ObjString
     char *chars;
 };
 
+ObjString *copyString(const char *chars, int length);
+
 /*
  Why not a macro?
  ---------------------
