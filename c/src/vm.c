@@ -35,12 +35,14 @@ void initVM()
 {
     resetStack();
     vm.objects = NULL;
+    initTable(&vm.globals);
     initTable(&vm.strings);
 }
 
 void freeVM()
 {
-    freeObjects();
+    freeTable(&vm.strings);
+    freeTable(&vm.globals);
 }
 
 void push(Value value)
@@ -84,6 +86,7 @@ static InterpretResult run()
 {
 #define READ_BYTE() (*vm.ip++)
 #define READ_CONSTANT() (vm.chunk->constants.values[READ_BYTE()])
+#define READ_STRING() AS_STRING(READ_CONSTANT())
 // You can pass operators as macro argument!
 // as far as the preprocessor is concerned, it's all just text tokens
 #define BINARY_OP(valueType, op)                        \
@@ -192,6 +195,25 @@ static InterpretResult run()
         case OP_POP:
             pop();
             break;
+        case OP_DEFINE_GLOBAL:
+        {
+            ObjString *name = READ_STRING();
+            tableSet(&vm.globals, name, peek(0));
+            pop();
+            break;
+        }
+        case OP_GET_GLOBAL:
+        {
+            ObjString *name = READ_STRING();
+            Value value;
+            if (!tableGet(&vm.globals, name, &value))
+            {
+                runtimeError("Undefined variable '%s'", name->chars);
+                return INTERPRET_RUNTIME_ERROR;
+            }
+            push(value);
+            break;
+        }
         case OP_RETURN:
             // Exit the interepreter
             return INTERPRET_OK;
@@ -199,6 +221,7 @@ static InterpretResult run()
     }
 
 #undef BINARY_OP
+#undef READ_STRING
 #undef READ_CONSTANT
 #undef READ_BYTE
 }

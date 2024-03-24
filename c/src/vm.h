@@ -15,6 +15,7 @@ typedef struct
     Value *stackTop; // points to the next value to be pushed
     Table strings;
     Obj *objects;
+    Table globals;
 } VM;
 
 typedef enum
