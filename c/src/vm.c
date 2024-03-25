@@ -125,11 +125,13 @@ static InterpretResult run()
         switch (instruction = READ_BYTE())
         {
         case OP_CONSTANT:
+        {
             Value constant = READ_CONSTANT();
             push(constant);
             printValue(constant);
             printf("\n");
             break;
+        }
         case OP_EQUAL:
             Value b = pop();
             Value a = pop();
@@ -154,6 +156,7 @@ static InterpretResult run()
             push(BOOL_VAL(isFalsey(pop())));
             break;
         case OP_ADD:
+        {
             if (IS_STRING(peek(0)) && IS_STRING(peek(1)))
             {
                 concatenate();
@@ -171,6 +174,7 @@ static InterpretResult run()
                 return INTERPRET_RUNTIME_ERROR;
             }
             break;
+        }
         case OP_SUBTRACT:
             BINARY_OP(NUMBER_VAL, -);
             break;
@@ -181,6 +185,7 @@ static InterpretResult run()
             BINARY_OP(NUMBER_VAL, /);
             break;
         case OP_NEGATE:
+        {
             if (!IS_NUMBER(peek(0)))
             {
                 runtimeError("Operand must be a number.");
@@ -188,6 +193,7 @@ static InterpretResult run()
             }
             push(NUMBER_VAL(-AS_NUMBER(pop())));
             break;
+        }
         case OP_PRINT:
         {
             printValue(pop());
@@ -250,6 +256,12 @@ static InterpretResult run()
         {
             uint16_t offset = READ_SHORT();
             vm.ip += offset;
+            break;
+        }
+        case OP_LOOP:
+        {
+            uint16_t offset = READ_SHORT();
+            vm.ip -= offset;
             break;
         }
         case OP_RETURN:
