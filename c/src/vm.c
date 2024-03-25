@@ -246,6 +246,12 @@ static InterpretResult run()
                 vm.ip += offset;
             break;
         }
+        case OP_JUMP:
+        {
+            uint16_t offset = READ_SHORT();
+            vm.ip += offset;
+            break;
+        }
         case OP_RETURN:
             // Exit the interepreter
             return INTERPRET_OK;
