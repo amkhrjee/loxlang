@@ -18,7 +18,7 @@ static int jumpInstruction(const char *name, int sign, Chunk *chunk, int offset)
     return offset + 3;
 }
 
-static int byteIntstruction(const char *name, Chunk *chunk, int offset)
+static int byteInstruction(const char *name, Chunk *chunk, int offset)
 {
     uint8_t slot = chunk->code[offset + 1];
     printf("%-16s %4d\n", name, slot);

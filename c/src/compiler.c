@@ -442,14 +442,14 @@ static void namedVariable(Token name, bool canAssign)
     int arg = resolveLocal(current, &name);
     if (arg != -1)
     {
-        getOp = "OP_GET_LOCAL";
-        setOp = "OP_SET_LOCAL";
+        getOp = OP_GET_LOCAL;
+        setOp = OP_SET_LOCAL;
     }
     else
     {
         arg = identifierConstant(&name);
-        getOp = "OP_GET_GLOBAL";
-        setOp = "OP_SET_GLOBAL";
+        getOp = OP_GET_GLOBAL;
+        setOp = OP_SET_GLOBAL;
     }
 
     if (canAssign && match(TOKEN_EQUAL))
