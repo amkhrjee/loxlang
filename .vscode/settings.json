@@ -2,6 +2,7 @@
     "C_Cpp.default.compilerPath": "/usr/bin/gcc",
     "files.associations": {
         "type_traits": "cpp",
-        "value.h": "c"
+        "value.h": "c",
+        "common.h": "c"
     }
 }
