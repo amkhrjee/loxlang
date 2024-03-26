@@ -85,6 +85,7 @@ static void concatenate()
 
 static InterpretResult run()
 {
+    CallFrame *frame = &vm.frames[vm.frameCount - 1];
 #define READ_BYTE() (*frame->ip++)
 #define READ_CONSTANT() (frame->function->chunk.constants.values[READ_BYTE()])
 #define READ_SHORT() \
