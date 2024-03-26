@@ -2,16 +2,22 @@
 #define clox_object_h
 
 #include "common.h"
+#include "chunk.h"
 #include "value.h"
 
 #define OBJ_TYPE(value) (AS_OBJ(value)->type)
+
+#define IS_FUNCTION(value) isObjType(Value, OBJ_FUNCTION)
 #define IS_STRING(value) isObjType(value, OBJ_STRING)
+
+#define AS_FUNCTION(value) ((ObjFunction *)AS_OBJ(value))
 #define AS_STRING(value) ((ObjString *)AS_OBJ(value))
 #define AS_CSTRING(value) (((ObjString *)AS_OBJ(value))->chars)
 
 typedef enum
 {
     OBJ_STRING,
+    OBJ_FUNCTION,
 } ObjType;
 
 struct Obj
@@ -20,7 +26,14 @@ struct Obj
     struct Obj *next; // Linked List node for garbage collection
 };
 
-// "Struct Inheritance"
+typedef struct
+{
+    Obj obj; // <- enables struct inheritance
+    int arity;
+    Chunk chunk;
+    ObjString *name;
+} ObjFunction;
+
 struct ObjString
 {
     Obj obj;
@@ -28,6 +41,8 @@ struct ObjString
     char *chars;
     uint32_t hash;
 };
+
+ObjFunction *newFunction();
 
 // Takes ownership of the string passed in
 ObjString *takeString(char *chars, int length);
