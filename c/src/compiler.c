@@ -58,8 +58,9 @@ typedef enum
     TYPE_SCRIPT,
 } FunctionType;
 
-typedef struct
+typedef struct Compiler
 {
+    struct Compiler *enclosing;
     ObjFunction *function;
     FunctionType type;
 
@@ -220,12 +221,16 @@ static void patchJump(int offset)
 
 static void initCompiler(Compiler *compiler, FunctionType type)
 {
+    compiler->enclosing = current;
     compiler->function = NULL;
     compiler->type = type;
     compiler->localCount = 0;
     compiler->scopeDepth = 0;
     compiler->function = newFunction();
     current = compiler;
+
+    if (type != TYPE_SCRIPT)
+        current->function->name = copyString(parser.previous.start, parser.previous.length);
 
     Local *local = &current->locals[current->localCount++];
     local->depth = 0;
@@ -241,6 +246,7 @@ static ObjFunction *endCompiler()
     if (!parser.hadError)
         disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
 #endif
+    current = current->enclosing;
     return function;
 }
 
@@ -601,7 +607,18 @@ static void function(FunctionType type)
     beginScope();
 
     consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
-    consume(TOKEN_LEFT_PAREN, "Expect ')' after function parameters.");
+    if (!check(TOKEN_RIGHT_PAREN))
+    {
+        do
+        {
+            current->function->arity++;
+            if (current->function->arity > 255)
+                errorAtCurrent("Can't have more than 255 parameters.");
+            uint8_t constant = parseVariable("Expect parameter name.");
+            defineVariable(constant);
+        } while (match(TOKEN_COMMA));
+    }
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after function parameters.");
     consume(TOKEN_LEFT_BRACE, "Expect '{' before function body.");
     block();
 
