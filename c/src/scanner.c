@@ -31,7 +31,6 @@ static Token makeToken(TokenType type)
     token.start = scanner.start;
     token.length = (int)(scanner.current - scanner.start);
     token.line = scanner.line;
-    printf("%d ", token.type);
     return token;
 }
 

@@ -3,6 +3,7 @@
     "files.associations": {
         "type_traits": "cpp",
         "value.h": "c",
-        "common.h": "c"
+        "common.h": "c",
+        "stdarg.h": "c"
     }
 }
