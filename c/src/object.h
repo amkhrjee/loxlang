@@ -23,6 +23,7 @@ typedef enum
     OBJ_NATIVE,
     OBJ_STRING,
     OBJ_CLOSURE,
+    OBJ_UPVALUE,
     OBJ_FUNCTION,
 } ObjType;
 
@@ -57,11 +58,21 @@ struct ObjString
     uint32_t hash;
 };
 
+typedef struct ObjUpvalue
+{
+    Obj obj;
+    Value *location;
+    Value closed;
+    struct ObjUpvalue *next;
+} ObjUpvalue;
+
 // Every function is a closure object even if it doesn't close over
 typedef struct
 {
     Obj obj;
     ObjFunction *function;
+    ObjUpvalue **upvalues;
+    int upvalueCount;
 } ObjClosure;
 
 ObjClosure *newClosure(ObjFunction *function);
@@ -72,6 +83,7 @@ ObjNative *newNative(NativeFn function);
 ObjString *takeString(char *chars, int length);
 // Does not take ownership of the string you passed in
 ObjString *copyString(const char *chars, int length);
+ObjUpvalue *newUpvalue(Value *slot);
 void printObject(Value value);
 
 /*

@@ -23,6 +23,7 @@ typedef struct
     Value stack[STACK_MAX];
     Value *stackTop; // points to the next value to be pushed
     Table strings;
+    ObjUpvalue *openUpvalues;
     Obj *objects;
     Table globals;
 } VM;
